@@ -36,4 +36,33 @@ class IntervalConstructionTest {
 
         Assertions.assertEquals(expected, actual);
     }
+
+    static Stream<Arguments> intervalConstructorCorrectDefaultOrderDataStream() {
+        return Stream.of(
+            Arguments.of("M2", "C", "D"),
+            Arguments.of("P5", "B", "F#"),
+            Arguments.of("m2", "Bb", "Cb"),
+            Arguments.of("M3", "Cb", "Eb"),
+            Arguments.of("P4", "G#", "C#"),
+            Arguments.of("m3", "B", "D"),
+            Arguments.of("m2", "Fb", "Gbb"),
+            Arguments.of("M2", "E#", "F##"),
+            Arguments.of("P4", "E", "A"),
+            Arguments.of("m2", "D#", "E"),
+            Arguments.of("M7", "G", "F#")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("intervalConstructorCorrectDefaultOrderDataStream")
+    void intervalConstructorCorrectDataTest(
+        String interval,
+        String initNote,
+        String expected
+    ) {
+        var args = new String[]{interval, initNote};
+        var actual = Intervals.intervalConstruction(args);
+
+        Assertions.assertEquals(expected, actual);
+    }
 }

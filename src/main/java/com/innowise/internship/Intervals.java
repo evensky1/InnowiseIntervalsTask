@@ -32,7 +32,7 @@ public class Intervals {
     public String intervalConstruction(String[] args) {
         var interval = args[0];
         var initNote = args[1];
-        var orderCoefficient = args[2].equals("dsc") ? -1 : 1;
+        var orderCoefficient = args.length > 2 && args[2].equals("dsc") ? -1 : 1;
 
         var resultNote = countResultNote(initNote, interval, orderCoefficient);
         var distance = countDistance(initNote, resultNote, orderCoefficient);
@@ -46,7 +46,7 @@ public class Intervals {
     public String intervalIdentification(String[] args) {
         var firstNote = args[0];
         var secondNote = args[1];
-        var orderCoefficient = args[2].equals("dsc") ? -1 : 1;
+        var orderCoefficient = args.length > 2 && args[2].equals("dsc") ? -1 : 1;
 
         var distance = countDistance(firstNote, secondNote, orderCoefficient);
         var alterationDistance =
