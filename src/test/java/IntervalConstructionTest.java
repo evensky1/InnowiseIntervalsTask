@@ -1,6 +1,7 @@
 import com.innowise.internship.Intervals;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -64,5 +65,59 @@ class IntervalConstructionTest {
         var actual = Intervals.intervalConstruction(args);
 
         Assertions.assertEquals(expected, actual);
+    }
+
+    static Stream<Arguments> intervalConstructorInvalidArgsCountDataStream() {
+        return Stream.of(
+            Arguments.of((Object) new String[]{"M2", "C", "D", "Redundant"}),
+            Arguments.of((Object) new String[]{"M2"}),
+            Arguments.of((Object) new String[]{}),
+            Arguments.of((Object) new String[]{"M2", "C", "D", "Redundant", "Redundant"})
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("intervalConstructorInvalidArgsCountDataStream")
+    void intervalConstructorInvalidArgsCountTest(String[] args) {
+        var exception = Assertions.assertThrows(RuntimeException.class,
+            () -> Intervals.intervalConstruction(args));
+
+        var exceptedMessage = "Illegal number of elements in input array";
+        var actualMessage = exception.getMessage();
+
+        Assertions.assertEquals(exceptedMessage, actualMessage);
+    }
+
+    @Test
+    void intervalConstructorNullArgsTest() {
+        var exception = Assertions.assertThrows(RuntimeException.class,
+            () -> Intervals.intervalConstruction(null));
+
+        var exceptedMessage = "Input array is null";
+        var actualMessage = exception.getMessage();
+
+        Assertions.assertEquals(exceptedMessage, actualMessage);
+    }
+
+    @Test
+    void intervalConstructorInvalidInitialNoteTest() {
+        var exception = Assertions.assertThrows(RuntimeException.class,
+            () -> Intervals.intervalConstruction(new String[]{"M3", "L1", "dsc"}));
+
+        var exceptedMessage = "Illegal initial note in input array";
+        var actualMessage = exception.getMessage();
+
+        Assertions.assertEquals(exceptedMessage, actualMessage);
+    }
+
+    @Test
+    void intervalConstructorInvalidIntervalNoteTest() {
+        var exception = Assertions.assertThrows(RuntimeException.class,
+            () -> Intervals.intervalConstruction(new String[]{"L4", "Db", "dsc"}));
+
+        var exceptedMessage = "Illegal interval value in input array";
+        var actualMessage = exception.getMessage();
+
+        Assertions.assertEquals(exceptedMessage, actualMessage);
     }
 }
