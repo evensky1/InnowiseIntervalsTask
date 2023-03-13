@@ -15,24 +15,17 @@ public class Intervals {
         "Abb", "Ab", "A", "A#", "A##",
         "Bbb", "Bb", "B", "B#", "B##");
 
-    private final List<String> reducedNoteList
-        = List.of("Cb", "C", "C#",
-        "Db", "D", "D#",
-        "Eb", "E", "E#",
-        "Fb", "F", "F#",
-        "Gb", "G", "G#",
-        "Ab", "A", "A#",
-        "Bb", "B", "B#");
-
     private final List<String> alterationSignList = List.of("bb", "b", "", "#", "##");
 
     private final List<String> intervalList
         = List.of("m2", "M2", "m3", "M3", "P4", "", "P5", "m6", "M6", "m7", "M7", "P8");
 
     public String intervalConstruction(String[] args) {
+        intervalConstructionArgsValidation(args);
+
         var interval = args[0];
         var initNote = args[1];
-        var orderCoefficient = args[2].equals("dsc") ? -1 : 1;
+        var orderCoefficient = args.length > 2 && args[2].equals("dsc") ? -1 : 1;
 
         var resultNote = countResultNote(initNote, interval, orderCoefficient);
         var distance = countDistance(initNote, resultNote, orderCoefficient);
@@ -44,14 +37,16 @@ public class Intervals {
     }
 
     public String intervalIdentification(String[] args) {
+        intervalIdentificationArgsValidation(args);
+
         var firstNote = args[0];
         var secondNote = args[1];
-        var orderCoefficient = args[2].equals("dsc") ? -1 : 1;
+        var orderCoefficient = args.length > 2 && args[2].equals("dsc") ? -1 : 1;
 
         var distance = countDistance(firstNote, secondNote, orderCoefficient);
         var alterationDistance =
             alterationSignList.indexOf(secondNote.substring(1)) -
-            alterationSignList.indexOf(firstNote.substring(1));
+                alterationSignList.indexOf(firstNote.substring(1));
 
         return intervalList.get(distance + orderCoefficient * alterationDistance - 1);
     }
@@ -98,5 +93,28 @@ public class Intervals {
         var newAlteration = currentAlteration + orderCoefficient * (semitones - distance);
 
         return alterationSignList.get(newAlteration);
+    }
+
+    private void intervalConstructionArgsValidation(String[] args) {
+        if (args == null) {
+            throw new RuntimeException("Input array is null");
+        } else if (args.length < 2 || args.length > 3) {
+            throw new RuntimeException("Illegal number of elements in input array");
+        } else if (fullNoteList.stream().noneMatch(note -> note.equals(args[1]))) {
+            throw new RuntimeException("Illegal initial note in input array");
+        } else if (intervalList.stream().noneMatch(interval -> interval.equals(args[0]))) {
+            throw new RuntimeException("Illegal interval value in input array");
+        }
+    }
+
+    private void intervalIdentificationArgsValidation(String[] args) {
+        if (args == null) {
+            throw new RuntimeException("Input array is null");
+        } else if (args.length < 2 || args.length > 3) {
+            throw new RuntimeException("Illegal number of elements in input array");
+        } else if (fullNoteList.stream().noneMatch(note -> note.equals(args[0]))
+            || fullNoteList.stream().noneMatch(note -> note.equals(args[1]))) {
+            throw new RuntimeException("Illegal notes in input array");
+        }
     }
 }
