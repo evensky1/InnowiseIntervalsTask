@@ -6,7 +6,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Intervals {
 
-    private final List<String> fullNoteList
+    private final List<String> fullNoteList     //For validation purposes only
         = List.of("Cbb", "Cb", "C", "C#", "C##",
         "Dbb", "Db", "D", "D#", "D##",
         "Ebb", "Eb", "E", "E#", "E##",
@@ -19,16 +19,17 @@ public class Intervals {
 
     private final List<String> intervalList
         = List.of("m2", "M2", "m3", "M3", "P4", "", "P5", "m6", "M6", "m7", "M7", "P8");
+                            //Empty element serves to save the semitone sequence
 
     public String intervalConstruction(String[] args) {
         intervalConstructionArgsValidation(args);
 
         var interval = args[0];
         var initNote = args[1];
-        var orderCoefficient = args.length > 2 && args[2].equals("dsc") ? -1 : 1;
+        var orderCoefficient = args.length > 2 && args[2].equals("dsc") ? -1 : 1; //Coefficient to set calculation direction
 
         var resultNote = countResultNote(initNote, interval, orderCoefficient);
-        var distance = countDistance(initNote, resultNote, orderCoefficient);
+        var distance = countSemitones(initNote, resultNote, orderCoefficient);
 
         var resultAlterationSign
             = countResultAlterationSign(initNote, interval, distance, orderCoefficient);
@@ -43,19 +44,20 @@ public class Intervals {
         var secondNote = args[1];
         var orderCoefficient = args.length > 2 && args[2].equals("dsc") ? -1 : 1;
 
-        var distance = countDistance(firstNote, secondNote, orderCoefficient);
-        var alterationDistance =
-            alterationSignList.indexOf(secondNote.substring(1)) -
-                alterationSignList.indexOf(firstNote.substring(1));
+        var distance = countSemitones(firstNote, secondNote, orderCoefficient);
+
+        var firstNoteAltValue = alterationSignList.indexOf(firstNote.substring(1));
+        var secondNoteAltValue = alterationSignList.indexOf(secondNote.substring(1));
+        var alterationDistance = secondNoteAltValue - firstNoteAltValue;
 
         return intervalList.get(distance + orderCoefficient * alterationDistance - 1);
     }
 
-    private int countDistance(String firstNote, String secondNote, int orderCoefficient) {
+    private int countSemitones(String firstNote, String secondNote, int orderCoefficient) {
         var realNoteDistance = "C-D-EF-G-A-B";
         var currentPos = realNoteDistance.indexOf(firstNote.charAt(0));
 
-        var distance = 0;
+        var semitoneCount = 0;
         while (realNoteDistance.charAt(currentPos) != secondNote.charAt(0)) {
             currentPos += orderCoefficient;
             currentPos %= realNoteDistance.length();
@@ -63,9 +65,9 @@ public class Intervals {
                 currentPos = realNoteDistance.length() - 1;
             }
 
-            distance++;
+            semitoneCount++;
         }
-        return distance;
+        return semitoneCount;
     }
 
     private String countResultNote(String initNote, String interval, int orderCoefficient) {
